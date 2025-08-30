@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smoothsql.mapper.QueryHistoryMapper">
+
+    <resultMap id="QueryHistoryResultMap" type="com.smoothsql.entity.QueryHistory">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="naturalQuery" column="natural_query"/>
+        <result property="generatedSql" column="generated_sql"/>
+        <result property="databaseName" column="database_name"/>
+        <result property="executionTime" column="execution_time"/>
+        <result property="resultCount" column="result_count"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.smoothsql.entity.QueryHistory" 
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO query_history (
+            user_id, natural_query, generated_sql, database_name, 
+            execution_time, result_count, created_at, status
+        ) VALUES (
+            #{userId}, #{naturalQuery}, #{generatedSql}, #{databaseName},
+            #{executionTime}, #{resultCount}, #{createdAt}, #{status}
+        )
+    </insert>
+
+    <select id="selectById" parameterType="long" resultMap="QueryHistoryResultMap">
+        SELECT * FROM query_history WHERE id = #{id}
+    </select>
+
+    <select id="selectByUserId" resultMap="QueryHistoryResultMap">
+        SELECT * FROM query_history 
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByUserId" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM query_history WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectAll" resultMap="QueryHistoryResultMap">
+        SELECT * FROM query_history 
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <update id="updateById" parameterType="com.smoothsql.entity.QueryHistory">
+        UPDATE query_history SET
+            user_id = #{userId},
+            natural_query = #{naturalQuery},
+            generated_sql = #{generatedSql},
+            database_name = #{databaseName},
+            execution_time = #{executionTime},
+            result_count = #{resultCount},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM query_history WHERE id = #{id}
+    </delete>
+
+</mapper>

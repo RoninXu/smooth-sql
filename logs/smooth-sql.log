@@ -1,0 +1,32 @@
+2025-08-30 12:43:34.784 [restartedMain] INFO  com.smoothsql.SmoothSqlApplication - Starting SmoothSqlApplication using Java 17.0.15 with PID 24744 (D:\Github\smooth-sql\target\classes started by Ronin in D:\Github\smooth-sql)
+2025-08-30 12:43:34.785 [restartedMain] INFO  com.smoothsql.SmoothSqlApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-30 12:43:34.820 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-08-30 12:43:34.820 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-08-30 12:43:35.213 [restartedMain] DEBUG o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [D:\Github\smooth-sql\target\classes\com\smoothsql\mapper\DatabaseSchemaMapper.class]
+2025-08-30 12:43:35.213 [restartedMain] DEBUG o.m.s.mapper.ClassPathMapperScanner - Identified candidate component class: file [D:\Github\smooth-sql\target\classes\com\smoothsql\mapper\QueryHistoryMapper.class]
+2025-08-30 12:43:35.214 [restartedMain] DEBUG o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'databaseSchemaMapper' and 'com.smoothsql.mapper.DatabaseSchemaMapper' mapperInterface
+2025-08-30 12:43:35.214 [restartedMain] DEBUG o.m.s.mapper.ClassPathMapperScanner - Enabling autowire by type for MapperFactoryBean with name 'databaseSchemaMapper'.
+2025-08-30 12:43:35.214 [restartedMain] DEBUG o.m.s.mapper.ClassPathMapperScanner - Creating MapperFactoryBean with name 'queryHistoryMapper' and 'com.smoothsql.mapper.QueryHistoryMapper' mapperInterface
+2025-08-30 12:43:35.215 [restartedMain] DEBUG o.m.s.mapper.ClassPathMapperScanner - Enabling autowire by type for MapperFactoryBean with name 'queryHistoryMapper'.
+2025-08-30 12:43:35.443 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-08-30 12:43:35.450 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-08-30 12:43:35.450 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.11]
+2025-08-30 12:43:35.482 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-08-30 12:43:35.482 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 661 ms
+2025-08-30 12:43:35.611 [restartedMain] DEBUG o.m.spring.SqlSessionFactoryBean - Parsed mapper file: 'file [D:\Github\smooth-sql\target\classes\mapper\DatabaseSchemaMapper.xml]'
+2025-08-30 12:43:35.618 [restartedMain] DEBUG o.m.spring.SqlSessionFactoryBean - Parsed mapper file: 'file [D:\Github\smooth-sql\target\classes\mapper\QueryHistoryMapper.xml]'
+2025-08-30 12:43:35.944 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-08-30 12:43:35.962 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2025-08-30 12:43:35.967 [restartedMain] INFO  com.smoothsql.SmoothSqlApplication - Started SmoothSqlApplication in 1.475 seconds (process running for 1.861)
+2025-08-30 12:44:01.414 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-30 12:44:01.414 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-08-30 12:44:01.415 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-08-30 12:44:01.489 [http-nio-8080-exec-1] INFO  c.smoothsql.controller.SqlController - 开始处理SQL生成请求 - 查询内容: '查询用户表中的所有用户信息', 数据库: 'demo'
+2025-08-30 12:44:01.490 [http-nio-8080-exec-1] INFO  c.s.service.SqlGenerationService - 开始SQL生成流程 - 自然语言: '查询用户表中的所有用户信息', 数据库: 'demo', 用户: 'anonymous'
+2025-08-30 12:44:01.499 [http-nio-8080-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-08-30 12:44:01.592 [http-nio-8080-exec-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@278c73c
+2025-08-30 12:44:01.593 [http-nio-8080-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-08-30 12:44:04.843 [http-nio-8080-exec-1] INFO  c.s.service.SqlGenerationService - SQL生成流程全部完成 - 总耗时: 3353ms (NLP: 146ms, 规则: 0ms, AI: 3175ms), 最终SQL: 'SELECT * FROM users', 置信度: 0.7
+2025-08-30 12:44:04.843 [http-nio-8080-exec-1] INFO  c.smoothsql.controller.SqlController - SQL生成成功 - 耗时: 3353ms, 生成SQL: 'SELECT * FROM users', 置信度: 0.7
+2025-08-30 20:17:15.292 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-08-30 20:17:15.295 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
