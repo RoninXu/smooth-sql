@@ -140,10 +140,38 @@ public class SqlGenerationService {
         
         // SELECT 子句
         sql.append("SELECT ");
-        if (intent.getColumns().isEmpty()) {
+        
+        // 处理DISTINCT
+        if (intent.isDistinct()) {
+            sql.append("DISTINCT ");
+        }
+        
+        // 处理聚合函数
+        if (intent.getAggregateFunction() != null && intent.getAggregateColumn() != null) {
+            sql.append(intent.getAggregateFunction()).append("(").append(intent.getAggregateColumn()).append(")");
+            if (!"COUNT".equals(intent.getAggregateFunction())) {
+                sql.append(" as ").append(intent.getAggregateFunction().toLowerCase()).append("_result");
+            } else {
+                sql.append(" as total_count");
+            }
+        } else if (intent.getColumns().isEmpty()) {
             sql.append("*");
         } else {
-            sql.append(String.join(", ", intent.getColumns()));
+            // 处理多表查询时的字段前缀
+            if (intent.getJoinConditions() != null && !intent.getJoinConditions().isEmpty()) {
+                List<String> qualifiedColumns = new ArrayList<>();
+                for (String column : intent.getColumns()) {
+                    // 简化处理：给每个字段加上主表前缀
+                    if (!column.contains(".")) {
+                        qualifiedColumns.add(intent.getTables().get(0) + "." + column);
+                    } else {
+                        qualifiedColumns.add(column);
+                    }
+                }
+                sql.append(String.join(", ", qualifiedColumns));
+            } else {
+                sql.append(String.join(", ", intent.getColumns()));
+            }
         }
         
         // FROM 子句
@@ -151,7 +179,19 @@ public class SqlGenerationService {
         if (intent.getTables().isEmpty()) {
             throw new RuntimeException("无法识别要查询的表");
         }
-        sql.append(intent.getTables().get(0)); // 简单起见，只使用第一个表
+        sql.append(intent.getTables().get(0)); // 主表
+        
+        // JOIN 子句
+        if (intent.getJoinConditions() != null && !intent.getJoinConditions().isEmpty()) {
+            for (NaturalLanguageService.JoinCondition joinCondition : intent.getJoinConditions()) {
+                sql.append(" ").append(joinCondition.getJoinType()).append(" JOIN ")
+                   .append(joinCondition.getRightTable())
+                   .append(" ON ")
+                   .append(joinCondition.getLeftTable()).append(".").append(joinCondition.getLeftColumn())
+                   .append(" = ")
+                   .append(joinCondition.getRightTable()).append(".").append(joinCondition.getRightColumn());
+            }
+        }
         
         // WHERE 子句
         if (!intent.getConditions().isEmpty()) {

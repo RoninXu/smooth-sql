@@ -12,6 +12,8 @@ public class QueryHistory {
     private Integer resultCount;
     private LocalDateTime createdAt;
     private String status;
+    private String tags;
+    private Boolean isFavorite;
 
     public QueryHistory() {
         this.createdAt = LocalDateTime.now();
@@ -87,5 +89,21 @@ public class QueryHistory {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public Boolean getIsFavorite() {
+        return isFavorite;
+    }
+
+    public void setIsFavorite(Boolean isFavorite) {
+        this.isFavorite = isFavorite;
     }
 }

@@ -26,6 +26,11 @@ public class NaturalLanguageService {
         INTENT_KEYWORDS.put("最小|最低|最少", "MIN");
         INTENT_KEYWORDS.put("分组|按.*分组", "GROUP_BY");
         INTENT_KEYWORDS.put("排序|按.*排序|从大到小|从小到大|升序|降序", "ORDER_BY");
+        INTENT_KEYWORDS.put("关联|连接|联合|结合.*查询", "JOIN");
+        INTENT_KEYWORDS.put("内连接|内联", "INNER_JOIN");
+        INTENT_KEYWORDS.put("左连接|左联", "LEFT_JOIN");
+        INTENT_KEYWORDS.put("右连接|右联", "RIGHT_JOIN");
+        INTENT_KEYWORDS.put("去重|不重复|唯一", "DISTINCT");
         
         // 操作关键词
         OPERATION_KEYWORDS.put("大于|超过|高于|多于", ">");
@@ -64,6 +69,22 @@ public class NaturalLanguageService {
         // 提取排序和分组信息
         intent.setOrderBy(extractOrderBy(naturalQuery));
         intent.setGroupBy(extractGroupBy(naturalQuery));
+        
+        // 提取JOIN条件
+        List<JoinCondition> joinConditions = extractJoinConditions(naturalQuery, databaseName, tables);
+        intent.setJoinConditions(joinConditions);
+        
+        // 识别聚合函数
+        String aggregateFunction = extractAggregateFunction(naturalQuery);
+        intent.setAggregateFunction(aggregateFunction);
+        
+        // 提取聚合字段
+        String aggregateColumn = extractAggregateColumn(naturalQuery, aggregateFunction);
+        intent.setAggregateColumn(aggregateColumn);
+        
+        // 识别是否需要去重
+        boolean isDistinct = extractDistinctFlag(naturalQuery);
+        intent.setDistinct(isDistinct);
         
         return intent;
     }
@@ -191,6 +212,84 @@ public class NaturalLanguageService {
         
         return columnMapping.getOrDefault(columnName.toLowerCase(), columnName);
     }
+    
+    private List<JoinCondition> extractJoinConditions(String query, String databaseName, List<String> tables) {
+        List<JoinCondition> joinConditions = new ArrayList<>();
+        
+        // 如果有多个表且查询中包含JOIN关键词
+        if (tables.size() > 1) {
+            String queryLower = query.toLowerCase();
+            String joinType = "INNER"; // 默认内连接
+            
+            // 确定JOIN类型
+            if (queryLower.contains("左连接") || queryLower.contains("左联")) {
+                joinType = "LEFT";
+            } else if (queryLower.contains("右连接") || queryLower.contains("右联")) {
+                joinType = "RIGHT";
+            } else if (queryLower.contains("内连接") || queryLower.contains("内联")) {
+                joinType = "INNER";
+            }
+            
+            // 简化的JOIN条件生成，假设是基于ID连接
+            for (int i = 1; i < tables.size(); i++) {
+                JoinCondition joinCondition = new JoinCondition();
+                joinCondition.setJoinType(joinType);
+                joinCondition.setLeftTable(tables.get(0));
+                joinCondition.setRightTable(tables.get(i));
+                joinCondition.setLeftColumn("id");
+                joinCondition.setRightColumn(tables.get(0).substring(0, tables.get(0).length() - 1) + "_id"); // 例如: users -> user_id
+                joinConditions.add(joinCondition);
+            }
+        }
+        
+        return joinConditions;
+    }
+    
+    private String extractAggregateFunction(String query) {
+        String queryLower = query.toLowerCase();
+        
+        if (queryLower.matches(".*统计.*|.*计数.*|.*数量.*|.*总数.*")) {
+            return "COUNT";
+        } else if (queryLower.matches(".*求和.*|.*总和.*|.*合计.*")) {
+            return "SUM";
+        } else if (queryLower.matches(".*平均.*|.*均值.*")) {
+            return "AVG";
+        } else if (queryLower.matches(".*最大.*|.*最高.*|.*最多.*")) {
+            return "MAX";
+        } else if (queryLower.matches(".*最小.*|.*最低.*|.*最少.*")) {
+            return "MIN";
+        }
+        
+        return null;
+    }
+    
+    private String extractAggregateColumn(String query, String aggregateFunction) {
+        if (aggregateFunction == null) {
+            return null;
+        }
+        
+        String queryLower = query.toLowerCase();
+        
+        // 简化的聚合字段识别
+        if ("COUNT".equals(aggregateFunction)) {
+            return "*"; // COUNT通常用*
+        } else {
+            // 对于SUM、AVG、MAX、MIN，尝试识别数值字段
+            if (queryLower.contains("金额") || queryLower.contains("价格") || queryLower.contains("total")) {
+                return "total_amount";
+            } else if (queryLower.contains("年龄") || queryLower.contains("age")) {
+                return "age";
+            } else if (queryLower.contains("分数") || queryLower.contains("score")) {
+                return "score";
+            }
+            return "id"; // 默认字段
+        }
+    }
+    
+    private boolean extractDistinctFlag(String query) {
+        String queryLower = query.toLowerCase();
+        return queryLower.contains("去重") || queryLower.contains("不重复") || queryLower.contains("唯一");
+    }
 
     // 内部类：查询意图
     public static class QueryIntent {
@@ -202,6 +301,10 @@ public class NaturalLanguageService {
         private List<QueryCondition> conditions;
         private String orderBy;
         private String groupBy;
+        private List<JoinCondition> joinConditions;
+        private String aggregateFunction;
+        private String aggregateColumn;
+        private boolean isDistinct;
 
         // Getters and Setters
         public String getOriginalQuery() { return originalQuery; }
@@ -227,6 +330,18 @@ public class NaturalLanguageService {
         
         public String getGroupBy() { return groupBy; }
         public void setGroupBy(String groupBy) { this.groupBy = groupBy; }
+        
+        public List<JoinCondition> getJoinConditions() { return joinConditions; }
+        public void setJoinConditions(List<JoinCondition> joinConditions) { this.joinConditions = joinConditions; }
+        
+        public String getAggregateFunction() { return aggregateFunction; }
+        public void setAggregateFunction(String aggregateFunction) { this.aggregateFunction = aggregateFunction; }
+        
+        public String getAggregateColumn() { return aggregateColumn; }
+        public void setAggregateColumn(String aggregateColumn) { this.aggregateColumn = aggregateColumn; }
+        
+        public boolean isDistinct() { return isDistinct; }
+        public void setDistinct(boolean distinct) { isDistinct = distinct; }
     }
 
     // 内部类：查询条件
@@ -243,5 +358,40 @@ public class NaturalLanguageService {
         
         public String getValue() { return value; }
         public void setValue(String value) { this.value = value; }
+    }
+    
+    // 内部类：JOIN条件
+    public static class JoinCondition {
+        private String joinType; // INNER, LEFT, RIGHT, FULL
+        private String leftTable;
+        private String rightTable;
+        private String leftColumn;
+        private String rightColumn;
+        
+        public JoinCondition() {}
+        
+        public JoinCondition(String joinType, String leftTable, String rightTable, 
+                           String leftColumn, String rightColumn) {
+            this.joinType = joinType;
+            this.leftTable = leftTable;
+            this.rightTable = rightTable;
+            this.leftColumn = leftColumn;
+            this.rightColumn = rightColumn;
+        }
+        
+        public String getJoinType() { return joinType; }
+        public void setJoinType(String joinType) { this.joinType = joinType; }
+        
+        public String getLeftTable() { return leftTable; }
+        public void setLeftTable(String leftTable) { this.leftTable = leftTable; }
+        
+        public String getRightTable() { return rightTable; }
+        public void setRightTable(String rightTable) { this.rightTable = rightTable; }
+        
+        public String getLeftColumn() { return leftColumn; }
+        public void setLeftColumn(String leftColumn) { this.leftColumn = leftColumn; }
+        
+        public String getRightColumn() { return rightColumn; }
+        public void setRightColumn(String rightColumn) { this.rightColumn = rightColumn; }
     }
 }

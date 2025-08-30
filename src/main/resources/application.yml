@@ -7,6 +7,29 @@ spring:
     username: root
     password: gy920689154
     driver-class-name: com.mysql.cj.jdbc.Driver
+    # 连接池配置
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  # 缓存配置
+  cache:
+    type: simple
+    cache-names:
+      - database-schema
+      - query-results
+      - user-permissions
+      - sql-generation
+      - query-statistics
+
+  # 安全配置
+  security:
+    user:
+      name: admin
+      password: admin123
 
 # MyBatis配置
 mybatis:
@@ -57,3 +80,37 @@ logging:
     name: logs/smooth-sql.log
     max-size: 10MB
     max-history: 30
+
+# 应用自定义配置
+smooth-sql:
+  # 性能配置
+  performance:
+    query-timeout: 30000
+    max-result-size: 10000
+    cache-ttl: 3600
+    
+  # 安全配置
+  security:
+    max-queries-per-day: 1000
+    password-min-length: 8
+    session-timeout: 7200
+    
+  # 导出配置
+  export:
+    max-export-rows: 50000
+    allowed-formats: xlsx,csv,json
+    
+  # 可视化配置
+  visualization:
+    max-chart-data-points: 1000
+    default-chart-types: bar,pie,line,table
+
+# 管理端点配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,cache
+  endpoint:
+    health:
+      show-details: when_authorized
