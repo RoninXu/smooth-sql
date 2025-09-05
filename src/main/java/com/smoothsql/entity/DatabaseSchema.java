@@ -6,8 +6,10 @@ public class DatabaseSchema {
     private String tableName;
     private String columnName;
     private String columnType;
+    private String dataType; // 添加dataType属性
     private Boolean isNullable;
     private String columnComment;
+    private String tableComment; // 添加tableComment属性
 
     public DatabaseSchema() {}
 
@@ -65,5 +67,21 @@ public class DatabaseSchema {
 
     public void setColumnComment(String columnComment) {
         this.columnComment = columnComment;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public String getTableComment() {
+        return tableComment;
+    }
+
+    public void setTableComment(String tableComment) {
+        this.tableComment = tableComment;
     }
 }

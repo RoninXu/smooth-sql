@@ -23,4 +23,8 @@ public interface DatabaseSchemaMapper {
     int deleteByDatabaseName(@Param("databaseName") String databaseName);
     
     int batchInsert(@Param("schemas") List<DatabaseSchema> schemas);
+    
+    // 新增方法：根据表名查询列信息
+    List<DatabaseSchema> selectColumnsByTableName(@Param("databaseName") String databaseName, 
+                                                 @Param("tableName") String tableName);
 }

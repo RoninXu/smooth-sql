@@ -70,4 +70,9 @@ public interface QueryHistoryMapper {
                             @Param("isFavorite") boolean isFavorite);
     
     int deleteByIdAndUserId(@Param("id") Long id, @Param("userId") String userId);
+    
+    // 新增方法：获取用户最近的查询
+    List<String> selectRecentQueriesByUser(@Param("userId") String userId, 
+                                          @Param("databaseName") String databaseName, 
+                                          @Param("limit") int limit);
 }

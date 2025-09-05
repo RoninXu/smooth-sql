@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smoothsql.mapper.DatabaseSchemaMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="DatabaseSchemaResultMap" type="com.smoothsql.entity.DatabaseSchema">
+        <id property="id" column="id"/>
+        <result property="databaseName" column="database_name"/>
+        <result property="tableName" column="table_name"/>
+        <result property="columnName" column="column_name"/>
+        <result property="columnType" column="column_type"/>
+        <result property="dataType" column="data_type"/>
+        <result property="isNullable" column="is_nullable"/>
+        <result property="columnComment" column="column_comment"/>
+        <result property="tableComment" column="table_comment"/>
+    </resultMap>
+
+    <!-- 插入单条记录 -->
+    <insert id="insert" parameterType="com.smoothsql.entity.DatabaseSchema">
+        INSERT INTO database_schema (
+            database_name, table_name, column_name, column_type, data_type, 
+            is_nullable, column_comment, table_comment
+        ) VALUES (
+            #{databaseName}, #{tableName}, #{columnName}, #{columnType}, #{dataType},
+            #{isNullable}, #{columnComment}, #{tableComment}
+        )
+    </insert>
+
+    <!-- 根据数据库名称查询 -->
+    <select id="selectByDatabaseName" parameterType="string" resultMap="DatabaseSchemaResultMap">
+        SELECT DISTINCT 
+            id, database_name, table_name, column_name, column_type, data_type,
+            is_nullable, column_comment, table_comment
+        FROM database_schema 
+        WHERE database_name = #{databaseName}
+        ORDER BY table_name, column_name
+    </select>
+
+    <!-- 根据表名查询 -->
+    <select id="selectByTableName" resultMap="DatabaseSchemaResultMap">
+        SELECT * FROM database_schema 
+        WHERE database_name = #{databaseName} AND table_name = #{tableName}
+        ORDER BY column_name
+    </select>
+
+    <!-- 根据表名查询列信息 -->
+    <select id="selectColumnsByTableName" resultMap="DatabaseSchemaResultMap">
+        SELECT * FROM database_schema 
+        WHERE database_name = #{databaseName} AND table_name = #{tableName}
+        ORDER BY column_name
+    </select>
+
+    <!-- 查询表名列表 -->
+    <select id="selectTableNames" parameterType="string" resultType="string">
+        SELECT DISTINCT table_name 
+        FROM database_schema 
+        WHERE database_name = #{databaseName}
+        ORDER BY table_name
+    </select>
+
+    <!-- 查询列名列表 -->
+    <select id="selectColumnNames" resultType="string">
+        SELECT column_name 
+        FROM database_schema 
+        WHERE database_name = #{databaseName} AND table_name = #{tableName}
+        ORDER BY column_name
+    </select>
+
+    <!-- 根据数据库名称删除 -->
+    <delete id="deleteByDatabaseName" parameterType="string">
+        DELETE FROM database_schema WHERE database_name = #{databaseName}
+    </delete>
+
+    <!-- 批量插入 -->
+    <insert id="batchInsert" parameterType="list">
+        INSERT INTO database_schema (
+            database_name, table_name, column_name, column_type, data_type,
+            is_nullable, column_comment, table_comment
+        ) VALUES
+        <foreach collection="schemas" item="schema" separator=",">
+            (
+                #{schema.databaseName}, #{schema.tableName}, #{schema.columnName}, 
+                #{schema.columnType}, #{schema.dataType}, #{schema.isNullable}, 
+                #{schema.columnComment}, #{schema.tableComment}
+            )
+        </foreach>
+    </insert>
+
+</mapper>
