@@ -6,9 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Spring Boot Maven project named "smooth-sql" using:
 - Java 17
-- Spring Boot 3.1.2
+- Spring Boot 3.2.0
 - Spring Web
 - Spring Data JPA
+- MyBatis 3.0.3
 - MySQL Database
 - Spring Boot DevTools
 

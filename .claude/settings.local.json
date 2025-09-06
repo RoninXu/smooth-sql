@@ -7,7 +7,8 @@
       "Bash(git push:*)",
       "Bash(git commit:*)",
       "Bash(mvn clean:*)",
-      "Bash(java:*)"
+      "Bash(java:*)",
+      "Bash(where java)"
     ],
     "deny": [],
     "ask": []
