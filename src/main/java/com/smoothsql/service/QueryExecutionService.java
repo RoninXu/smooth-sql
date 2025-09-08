@@ -1,5 +1,6 @@
 package com.smoothsql.service;
 
+import com.smoothsql.dto.SqlExecuteResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -256,5 +257,29 @@ public class QueryExecutionService {
         public List<Map<String, Object>> getRows() { return rows; }
         public Integer getTotalCount() { return totalCount; }
         public Long getExecutionTime() { return executionTime; }
+    }
+
+    /**
+     * 兼容接口：执行查询（兼容EnhancedSqlController调用）
+     */
+    public SqlExecuteResponse executeQuery(String sql, String database, Integer limit) {
+        QueryExecutionResult result = executeSql(sql, limit);
+        
+        SqlExecuteResponse response = new SqlExecuteResponse();
+        response.setSuccess(result.isSuccess());
+        response.setMessage(result.getMessage());
+        
+        if (result.isSuccess() && result.getData() != null) {
+            response.setData(result.getData());
+        }
+        
+        return response;
+    }
+
+    /**
+     * 兼容接口：执行查询（两参数版本）
+     */
+    public SqlExecuteResponse executeQuery(String sql, String database) {
+        return executeQuery(sql, database, null);
     }
 }

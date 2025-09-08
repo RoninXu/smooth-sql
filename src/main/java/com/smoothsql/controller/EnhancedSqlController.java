@@ -2,6 +2,7 @@ package com.smoothsql.controller;
 
 import com.smoothsql.dto.*;
 import com.smoothsql.service.*;
+import com.smoothsql.service.QueryExecutionService.QueryResultData;
 import com.smoothsql.service.UserPermissionService.QueryLimitResult;
 import com.smoothsql.service.QueryHistoryService.QueryStatistics;
 import com.smoothsql.service.QueryHistoryService.QueryRecommendation;
@@ -361,13 +362,13 @@ public class EnhancedSqlController {
     public static class EnhancedQueryResponse {
         private boolean success;
         private String message;
-        private SqlExecuteResponse.QueryResultData data;
+        private QueryResultData data;
         private String explanation;
         private VisualizationAnalysis visualization;
         private Map<String, Object> metadata;
 
         public EnhancedQueryResponse(boolean success, String message, 
-                                   SqlExecuteResponse.QueryResultData data, String explanation,
+                                   QueryResultData data, String explanation,
                                    VisualizationAnalysis visualization, Map<String, Object> metadata) {
             this.success = success;
             this.message = message;
@@ -380,7 +381,7 @@ public class EnhancedSqlController {
         // Getters
         public boolean isSuccess() { return success; }
         public String getMessage() { return message; }
-        public SqlExecuteResponse.QueryResultData getData() { return data; }
+        public QueryResultData getData() { return data; }
         public String getExplanation() { return explanation; }
         public VisualizationAnalysis getVisualization() { return visualization; }
         public Map<String, Object> getMetadata() { return metadata; }

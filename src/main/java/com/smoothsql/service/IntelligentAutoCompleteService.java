@@ -658,6 +658,7 @@ public class IntelligentAutoCompleteService {
         public String getMessage() { return message; }
         public int getPosition() { return position; }
         public String getSuggestion() { return suggestion; }
+        public String getDescription() { return message; } // 添加getDescription方法，返回message作为描述
     }
 
     public static class SqlSuggestion {

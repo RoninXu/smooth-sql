@@ -45,7 +45,8 @@ public class ResultVisualizationService {
         VisualizationAnalysis analysis = new VisualizationAnalysis();
         
         List<String> columns = response.getData().getColumns();
-        List<List<Object>> rows = response.getData().getRows();
+        List<Map<String, Object>> rowMaps = response.getData().getRows();
+        List<List<Object>> rows = convertRowMapsToRowLists(rowMaps, columns);
         
         // 分析数据类型
         Map<String, ColumnType> columnTypes = analyzeColumnTypes(columns, rows);
@@ -78,7 +79,8 @@ public class ResultVisualizationService {
         logger.debug("准备图表数据 - 类型: {}, 分组列: {}, 数值列: {}", chartType, groupByColumn, valueColumn);
         
         List<String> columns = response.getData().getColumns();
-        List<List<Object>> rows = response.getData().getRows();
+        List<Map<String, Object>> rowMaps = response.getData().getRows();
+        List<List<Object>> rows = convertRowMapsToRowLists(rowMaps, columns);
         
         ChartData chartData = new ChartData();
         chartData.setType(chartType);
@@ -115,7 +117,8 @@ public class ResultVisualizationService {
         Sheet sheet = workbook.createSheet(sheetName != null ? sheetName : "查询结果");
         
         List<String> columns = response.getData().getColumns();
-        List<List<Object>> rows = response.getData().getRows();
+        List<Map<String, Object>> rowMaps = response.getData().getRows();
+        List<List<Object>> rows = convertRowMapsToRowLists(rowMaps, columns);
         
         // 创建表头样式
         CellStyle headerStyle = workbook.createCellStyle();
@@ -183,7 +186,8 @@ public class ResultVisualizationService {
         StringBuilder csv = new StringBuilder();
         
         List<String> columns = response.getData().getColumns();
-        List<List<Object>> rows = response.getData().getRows();
+        List<Map<String, Object>> rowMaps = response.getData().getRows();
+        List<List<Object>> rows = convertRowMapsToRowLists(rowMaps, columns);
         
         // 写入表头
         csv.append(String.join(",", columns)).append("\n");
@@ -447,5 +451,22 @@ public class ResultVisualizationService {
     // 枚举：列数据类型
     public enum ColumnType {
         NUMERIC, STRING, DATE
+    }
+
+    /**
+     * 将Map格式的行数据转换为List格式
+     */
+    private List<List<Object>> convertRowMapsToRowLists(List<Map<String, Object>> rowMaps, List<String> columns) {
+        List<List<Object>> rowLists = new ArrayList<>();
+        
+        for (Map<String, Object> rowMap : rowMaps) {
+            List<Object> row = new ArrayList<>();
+            for (String column : columns) {
+                row.add(rowMap.get(column));
+            }
+            rowLists.add(row);
+        }
+        
+        return rowLists;
     }
 }
